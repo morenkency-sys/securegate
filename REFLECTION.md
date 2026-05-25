@@ -24,8 +24,8 @@ Another big surprise happened during deployment. I realized I couldn't just use 
 
 ### Q2 — Law of Leaky Abstractions
 **Code reference:** `package.json` line 7 (`prisma migrate deploy`) and `prisma/schema.prisma` lines 6-8
-**My Answer:** Prisma is a brilliant abstraction over raw SQL, but it leaked heavily during the Vercel/Supabase deployment. Prisma assumes a persistent, direct connection to the database. In a serverless environment, this abstraction breaks completely. I had to bypass it by explicitly configuring `directUrl = env("DIRECT_URL")` in the schema and mapping it to a port 5432 session pooler, while mapping the main URL to a port 6543 transaction pooler.
-**What goes wrong if ignored:** The application deploys successfully on Vercel, but every subsequent login attempt or database query fails with a catastrophic "Can't reach database server" error due to IPv6 incompatibilities and connection exhaustion.
+**My Answer:** Prisma is usually great because it hides all the complicated SQL stuff. But when I tried deploying my app on Vercel with Supabase, Prisma completely "leaked." It assumes it has a normal, direct connection to the database. Because Vercel uses serverless functions, I couldn't just use Prisma normally. I actually had to dig into the settings, add a `directUrl` in the schema, and figure out how to use Supabase's special port 6543 transaction pooler just to make the connection work.
+**What goes wrong if ignored:** If I didn't figure out the connection poolers, my Vercel deployment would say "successful," but the moment anyone tried to log in or use the app, it would crash and say "Can't reach database server" because Prisma would be completely confused by the serverless network.
 
 ### Q3 — YAGNI
 **Code reference:** `lib/auth.ts` lines 7-45 (Providers array)
