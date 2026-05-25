@@ -43,6 +43,32 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        // If credentials are valid but user is not verified, send a new verification email!
+        if (!user.emailVerified) {
+          const crypto = await import("crypto");
+          const { sendVerificationEmail } = await import("./mail");
+          
+          const token = crypto.randomBytes(32).toString("hex");
+          const expires = new Date(Date.now() + 24 * 3600 * 1000); // 24 hours
+          
+          // Clear any old tokens for this user
+          await db.verificationToken.deleteMany({
+            where: { identifier: user.email },
+          });
+
+          // Create a new token in the database
+          await db.verificationToken.create({
+            data: {
+              identifier: user.email,
+              token,
+              expires,
+            },
+          });
+
+          // Fire off the email
+          await sendVerificationEmail(user.email, token);
+        }
+
         return {
           id: user.id,
           email: user.email,
