@@ -19,8 +19,8 @@ Another big surprise happened during deployment. I realized I couldn't just use 
 
 ### Q1 — Murphy's Law
 **Code reference:** `lib/rate-limit.ts` and `app/api/reset-password/route.ts` line 41
-**My Answer:** I applied Murphy's Law by actively assuming attackers will inevitably attempt to break the authentication flow. I built an in-memory rate limiter to block excessive login attempts, and I explicitly scrubbed the `reset-password` endpoint to return a generic "Token is invalid or has expired" message rather than confirming if an email exists.
-**What goes wrong if ignored:** Without the rate limiter, malicious bots could easily brute-force user passwords. Without the generic error message, hackers could easily scrape the API to figure out exactly which email addresses are registered on the platform, causing a massive privacy breach.
+**My Answer:** Murphy's Law basically means anything that can go wrong will go wrong. I applied this by just assuming people will try to mess with the login system. So, I added a rate limiter to block anyone trying to guess passwords too many times. I also made sure the "forgot password" message just says "Token is invalid or has expired" instead of telling the user if the email actually exists in our database.
+**What goes wrong if ignored:** If I didn't add the rate limiter, someone could just run a script to guess thousands of passwords until they finally get in. And if I didn't change the error message, hackers could just test random emails to see exactly who uses the platform, which is a big privacy issue.
 
 ### Q2 — Law of Leaky Abstractions
 **Code reference:** `package.json` line 7 (`prisma migrate deploy`) and `prisma/schema.prisma` lines 6-8
