@@ -11,7 +11,9 @@
 SecureGate is a production-grade, highly secure authentication gateway built with Next.js App Router and Prisma. It features robust token-based email verification, a secure password reset flow, dynamic real-time UI validation, and defensive rate-limiting mechanisms to protect against brute-force and user enumeration attacks.
 
 ## Part 2 — What Surprised Me
-What surprised me most was the sheer complexity of database connection pooling in a serverless environment. I initially thought deploying to Vercel and connecting to Supabase would require a single `DATABASE_URL`. I quickly learned that Vercel's serverless architecture rapidly exhausts database connections, forcing me to learn the layer beneath Prisma to explicitly configure an IPv4 Transaction Pooler for standard queries and a Session Pooler strictly for safe migrations.
+The first thing that surprised me was integrating the email verification link. In class, we did this using Node.js and Nodemailer, so using the Resend API was completely new to me. I had to troubleshoot and try multiple different approaches until I finally got Resend to work and actually saw the verification link pop up in my email inbox. 
+
+Another big surprise happened during deployment. I realized I couldn't just use my local database server (`localhost`). I knew we had spoken about Neon in class, so I tried that first, but the website seemed to be down or not working for me. I ended up using Supabase instead. Even then, it wasn't a simple copy-paste—I had to figure out how to use their IPv4 transaction pooler string just to get my deployed Vercel app to connect to the database!
 
 ## Part 3 — Engineering Laws Quiz
 
