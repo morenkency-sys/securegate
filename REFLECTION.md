@@ -29,8 +29,8 @@ Another big surprise happened during deployment. I realized I couldn't just use 
 
 ### Q3 — YAGNI
 **Code reference:** `lib/auth.ts` lines 7-45 (Providers array)
-**My Answer:** Adding social logins, multi-factor authentication, or complex audit logs right now would violate YAGNI (You Aren't Gonna Need It) because those features are completely unnecessary for the immediate MVP requirements. When the time comes to add Google login, I will simply append `GoogleProvider` to the existing `providers` array in NextAuth without rewriting the core logic.
-**What goes wrong if ignored:** I would have wasted days building a massive, fragile plugin architecture for OAuth providers that the client didn't ask for, drastically delaying the launch and polluting the codebase with untested "dead code."
+**My Answer:** YAGNI stands for "You Aren't Gonna Need It." Adding things like social logins or multi-factor auth right now would break this rule because we don't actually need them for this MVP. I just focused on getting the email and password working perfectly. Later on, if we actually need Google login, I can easily just add it to the NextAuth `providers` list without breaking anything else.
+**What goes wrong if ignored:** If I tried to build all those extra features right now, I would have wasted days writing code that nobody asked for. It would have delayed the launch and just filled up the codebase with extra stuff that could cause confusing bugs later on.
 
 ### Q4 — Kerckhoffs's Principle
 **Code reference:** `app/api/register/route.ts` line 36 (`bcrypt.hash(password, 12)`)
